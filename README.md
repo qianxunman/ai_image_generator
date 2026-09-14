@@ -2,6 +2,8 @@
 
 AI Image Generator 是一个基于 Flutter Windows 的 AI 图片生成客户端，支持 OpenAI 兼容的图片生成接口。
 
+![AI Image Generator 截图](screenshot.png)
+
 ## 功能特性
 
 - 输入提示词生成图片
