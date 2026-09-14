@@ -123,6 +123,7 @@ class _ImageStudioPageState extends State<ImageStudioPage> {
     if (model.isEmpty) return _showError('请输入模型名称');
 
     await _saveBaseUrlToDisk(baseUrl);
+    await _saveModelToDisk(model);
     if (_saveApiKey) {
       await _saveApiKeyToDisk(apiKey);
     }
@@ -229,8 +230,12 @@ class _ImageStudioPageState extends State<ImageStudioPage> {
       if (settings is! Map) return;
       final baseUrl = settings['baseUrl'];
       final apiKey = settings['apiKey'];
+      final model = settings['model'];
       if (baseUrl is String && baseUrl.trim().isNotEmpty) {
         _baseUrlController.text = baseUrl.trim();
+      }
+      if (model is String && model.trim().isNotEmpty) {
+        _modelController.text = model.trim();
       }
       if (apiKey is String && apiKey.trim().isNotEmpty && mounted) {
         _apiKeyController.text = apiKey.trim();
@@ -287,6 +292,17 @@ class _ImageStudioPageState extends State<ImageStudioPage> {
       await _writeSettings(settings);
     } catch (_) {
       if (mounted) _showError('保存 Base URL 失败，请检查用户目录权限');
+    }
+  }
+
+  Future<void> _saveModelToDisk(String model) async {
+    if (model.isEmpty) return;
+    try {
+      final settings = await _readSettings();
+      settings['model'] = model;
+      await _writeSettings(settings);
+    } catch (_) {
+      if (mounted) _showError('保存模型失败，请检查用户目录权限');
     }
   }
 
@@ -434,6 +450,7 @@ class _ImageStudioPageState extends State<ImageStudioPage> {
     searchController.dispose();
     if (selected != null && mounted) {
       setState(() => _modelController.text = selected);
+      unawaited(_saveModelToDisk(selected));
     }
   }
 
